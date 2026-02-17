@@ -82,7 +82,13 @@ export default function Dashboard({
       });
 
       if (shouldComplete) {
-        await supabase.from('progress').upsert({ topic_id: topicId });
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        await supabase.from('progress').upsert(
+          { user_id: user.id, topic_id: topicId },
+          { onConflict: 'user_id,topic_id' }
+        );
 
         // Update streak only on completion, not unchecking
         const today = getISTDateString();
@@ -93,7 +99,7 @@ export default function Dashboard({
           await supabase
             .from('profiles')
             .update({ streak_count: newStreak, last_active_date: today })
-            .eq('id', (await supabase.auth.getUser()).data.user!.id);
+            .eq('id', user.id);
         }
       } else {
         await supabase.from('progress').delete().eq('topic_id', topicId);
