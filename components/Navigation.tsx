@@ -45,17 +45,11 @@ export default function Navigation() {
             >
               Program
             </button>
-            <button
-              onClick={() => scrollToSection('tracks')}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Tracks
-            </button>
             <Link href="/resources" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Resources
             </Link>
             <Link href="/tracks" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              My Dashboard
+              My Track
             </Link>
             <Button
               onClick={() => scrollToSection('tracks')}
