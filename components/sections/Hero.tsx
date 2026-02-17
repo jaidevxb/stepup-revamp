@@ -1,9 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
 export default function Hero() {
+  const scrollToProgram = () => {
+    document.getElementById('program')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="pt-32 pb-20 px-6 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
@@ -19,11 +24,13 @@ export default function Hero() {
               — the kind startups actually want to hire.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
-                Choose Your Track
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-gray-300 text-gray-900 hover:bg-gray-50">
+              <Link href="/tracks">
+                <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white w-full sm:w-auto">
+                  Choose Your Track
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="border-gray-300 text-gray-900 hover:bg-gray-50" onClick={scrollToProgram}>
                 See the Program
               </Button>
             </div>
