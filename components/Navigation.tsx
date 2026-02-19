@@ -48,6 +48,9 @@ export default function Navigation() {
             <Link href="/resources" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Resources
             </Link>
+            <Link href="/gallery" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              Gallery
+            </Link>
             <Link href="/tracks" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               My Track
             </Link>

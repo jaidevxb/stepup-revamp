@@ -2,6 +2,7 @@ export type Topic = {
   id: string;
   title: string;
   estimatedHours: number;
+  url?: string;
 };
 
 export type Phase = {
@@ -25,7 +26,7 @@ const fsCorePhases: Phase[] = [
     title: 'Foundations',
     weekRange: 'Weeks 1–3',
     topics: [
-      { id: 'html-fundamentals', title: 'HTML5 Fundamentals', estimatedHours: 8 },
+      { id: 'html-fundamentals', title: 'HTML5 Fundamentals', estimatedHours: 8, url:'https://www.youtube.com/watch?v=qz0aGYrrlhU' },
       { id: 'css3-responsive', title: 'CSS3 & Responsive Design', estimatedHours: 8 },
       { id: 'flexbox-grid', title: 'Flexbox & Grid', estimatedHours: 6 },
       { id: 'vscode-setup', title: 'VS Code Setup & Productivity', estimatedHours: 2 },

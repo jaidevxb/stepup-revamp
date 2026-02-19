@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client';
 import { TRACK_CONFIGS, TRACK_OPTIONS, PROJECT_IDEAS } from '@/lib/trackData';
 import Navigation from '@/components/Navigation';
 import PhaseAccordion from './PhaseAccordion';
-import ProjectLog, { type Project } from './ProjectLog';
+import { type Project } from './ProjectLog';
+import SubmitProject from './SubmitProject';
 
 // ─── IST streak helpers ───────────────────────────────────────────────────────
 
@@ -281,15 +282,15 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Project Log */}
+        {/* Submit Project */}
         <div>
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">
-            Weekly Projects
+            Share Your Work
           </h2>
-          <ProjectLog
+          <SubmitProject
             key={currentTrack}
-            initialProjects={projects}
-            trackId={currentTrack}
+            currentTrack={currentTrack}
+            userName={name}
           />
         </div>
 

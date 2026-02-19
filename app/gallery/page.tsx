@@ -1,0 +1,191 @@
+import { createClient } from '@/lib/supabase/server';
+import Navigation from '@/components/Navigation';
+import Link from 'next/link';
+import { Globe, Github } from 'lucide-react';
+import { TRACK_CONFIGS } from '@/lib/trackData';
+
+type GalleryProject = {
+  id: string;
+  user_name: string;
+  track_id: string;
+  title: string;
+  description: string;
+  demo_url: string;
+  github_url: string;
+  image_url: string;
+  created_at: string;
+};
+
+const TRACK_BADGE_STYLES: Record<string, string> = {
+  'fs-core': 'bg-blue-50 text-blue-700',
+  'fs-ai': 'bg-purple-50 text-purple-700',
+  'fs-ds': 'bg-green-50 text-green-700',
+  'fs-analytics': 'bg-orange-50 text-orange-700',
+  'fs-devops': 'bg-rose-50 text-rose-700',
+};
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+export default async function GalleryPage() {
+  const supabase = await createClient();
+
+  const { data: projects } = await supabase
+    .from('gallery_projects')
+    .select('id, user_name, track_id, title, description, demo_url, github_url, image_url, created_at')
+    .order('created_at', { ascending: false });
+
+  const allProjects = (projects ?? []) as GalleryProject[];
+
+  // Group counts by track for the filter summary
+  const trackCounts = allProjects.reduce<Record<string, number>>((acc, p) => {
+    acc[p.track_id] = (acc[p.track_id] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return (
+    <div className="min-h-screen bg-[#F8F9FA]">
+      <Navigation />
+
+      {/* Page header */}
+      <div className="bg-white border-b border-gray-100 mt-[65px]">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-12">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+              Community
+            </p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">Project Gallery</h1>
+            <p className="text-gray-500 text-base leading-relaxed">
+              Real projects built by StepUp learners across all tracks. See what the community is shipping.
+            </p>
+          </div>
+
+          {/* Track breakdown */}
+          {allProjects.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="text-xs font-semibold px-3 py-1.5 bg-gray-900 text-white rounded-full">
+                All — {allProjects.length}
+              </span>
+              {Object.entries(trackCounts).map(([trackId, count]) => (
+                <span
+                  key={trackId}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full ${TRACK_BADGE_STYLES[trackId] ?? 'bg-gray-100 text-gray-600'}`}
+                >
+                  {TRACK_CONFIGS[trackId]?.trackName ?? trackId} — {count}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-10">
+        {allProjects.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-4xl mb-4">🚀</p>
+            <p className="text-lg font-semibold text-gray-700 mb-2">No projects yet</p>
+            <p className="text-sm text-gray-400 max-w-xs mx-auto mb-6">
+              Be the first to submit your project and inspire other learners.
+            </p>
+            <Link
+              href="/tracks"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Go to My Track
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {allProjects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-white rounded-xl border border-gray-100 flex flex-col hover:border-gray-300 transition-colors overflow-hidden"
+              >
+                {/* Cover image */}
+                {project.image_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={project.image_url}
+                    alt={project.title}
+                    className="w-full h-36 object-cover"
+                  />
+                )}
+
+                <div className="p-5 flex flex-col gap-3 flex-1">
+                  {/* Track badge + title */}
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug flex-1">
+                      {project.title}
+                    </h3>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${
+                        TRACK_BADGE_STYLES[project.track_id] ?? 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {TRACK_CONFIGS[project.track_id]?.trackName ?? project.track_id}
+                    </span>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-xs text-gray-500 leading-relaxed flex-1">
+                    {project.description}
+                  </p>
+
+                  {/* Footer: author + links */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+                    <div>
+                      <p className="text-xs font-medium text-gray-600">{project.user_name}</p>
+                      <p className="text-xs text-gray-400">{formatDate(project.created_at)}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {project.demo_url && (
+                        <a
+                          href={project.demo_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium"
+                        >
+                          <Globe size={12} />
+                          Demo
+                        </a>
+                      )}
+                      {project.github_url && (
+                        <a
+                          href={project.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium"
+                        >
+                          <Github size={12} />
+                          Code
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CTA for logged-in users */}
+        {allProjects.length > 0 && (
+          <div className="mt-10 text-center">
+            <p className="text-sm text-gray-400 mb-3">Built something cool?</p>
+            <Link
+              href="/tracks"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Submit Your Project
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import type { Phase } from '@/lib/trackData';
 
 interface PhaseAccordionProps {
@@ -60,27 +60,42 @@ export default function PhaseAccordion({
           {phase.topics.map((topic) => {
             const done = completedTopics.has(topic.id);
             return (
-              <label
+              <div
                 key={topic.id}
-                className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 cursor-pointer"
+                className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50"
               >
                 <input
+                  id={`topic-${topic.id}`}
                   type="checkbox"
                   checked={done}
                   onChange={() => onToggle(topic.id, !done)}
-                  className="w-4 h-4 accent-gray-900 flex-shrink-0"
+                  className="w-4 h-4 accent-gray-900 flex-shrink-0 cursor-pointer"
                 />
-                <span
-                  className={`text-sm flex-1 ${
+                <label
+                  htmlFor={`topic-${topic.id}`}
+                  className={`text-sm flex-1 cursor-pointer ${
                     done ? 'line-through text-gray-400' : 'text-gray-700'
                   }`}
                 >
                   {topic.title}
-                </span>
+                </label>
                 <span className="text-xs text-gray-400 flex-shrink-0">
                   ~{topic.estimatedHours}h
                 </span>
-              </label>
+                {topic.url ? (
+                  <a
+                    href={topic.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open course for ${topic.title}`}
+                    className="flex-shrink-0 text-gray-300 hover:text-gray-700 transition-colors"
+                  >
+                    <ExternalLink size={13} />
+                  </a>
+                ) : (
+                  <span className="flex-shrink-0 w-[13px]" />
+                )}
+              </div>
             );
           })}
         </div>

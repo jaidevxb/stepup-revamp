@@ -6,7 +6,10 @@ import { createClient } from '@/lib/supabase/client';
 import { TRACK_OPTIONS, PROJECT_IDEAS } from '@/lib/trackData';
 
 export default function Onboarding({ userId }: { userId: string }) {
-  const [name, setName] = useState('');
+  // Pre-fill name from localStorage (set in AuthPage during sign-up)
+  const [name, setName] = useState(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('stepup_pending_name') ?? '' : ''
+  );
   const [selectedTrack, setSelectedTrack] = useState('fs-core');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
@@ -51,6 +54,8 @@ export default function Onboarding({ userId }: { userId: string }) {
       );
     }
 
+    // Clean up the pending name now that the profile is created
+    localStorage.removeItem('stepup_pending_name');
     // Hard redirect — router.refresh() doesn't reliably re-render server components
     window.location.replace('/tracks');
   };
