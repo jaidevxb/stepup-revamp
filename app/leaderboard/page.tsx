@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { Trophy, ArrowRight } from 'lucide-react';
 
@@ -165,6 +166,7 @@ export default async function LeaderboardPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

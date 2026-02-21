@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { Globe, Github, ArrowRight } from 'lucide-react';
 import { TRACK_CONFIGS } from '@/lib/trackData';
@@ -210,6 +211,7 @@ export default async function GalleryPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

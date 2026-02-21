@@ -4,21 +4,36 @@ import { useState } from 'react';
 import { Code2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
+type Mode = 'signup' | 'login';
+
 export default function AuthPage({ error }: { error?: string }) {
+  const [mode, setMode] = useState<Mode>('signup');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(error ?? '');
 
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setErr('');
+    setName('');
+    setEmail('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { setErr('Please enter your name.'); return; }
+    if (mode === 'signup' && !name.trim()) {
+      setErr('Please enter your name.');
+      return;
+    }
     setLoading(true);
     setErr('');
 
-    // Persist name so Onboarding can pre-fill it after magic link verification
-    localStorage.setItem('stepup_pending_name', name.trim());
+    // Persist name so Onboarding can pre-fill it after magic link verification (signup only)
+    if (mode === 'signup') {
+      localStorage.setItem('stepup_pending_name', name.trim());
+    }
 
     const supabase = createClient();
     const { error: supaErr } = await supabase.auth.signInWithOtp({
@@ -65,9 +80,39 @@ export default function AuthPage({ error }: { error?: string }) {
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Start Your Journey</h1>
+              {/* Mode toggle */}
+              <div className="flex rounded-lg border border-gray-200 p-1 mb-6">
+                <button
+                  type="button"
+                  onClick={() => switchMode('signup')}
+                  className={`flex-1 text-sm font-semibold py-2 rounded-md transition-colors ${
+                    mode === 'signup'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  New User
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchMode('login')}
+                  className={`flex-1 text-sm font-semibold py-2 rounded-md transition-colors ${
+                    mode === 'login'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Log In
+                </button>
+              </div>
+
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                {mode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
+              </h1>
               <p className="text-gray-500 text-sm mb-6">
-                Enter your details and we&apos;ll send you a magic link — no password needed.
+                {mode === 'signup'
+                  ? "Enter your details and we'll send you a magic link — no password needed."
+                  : "Enter your email and we'll send you a magic link to sign in."}
               </p>
 
               {err && (
@@ -77,19 +122,21 @@ export default function AuthPage({ error }: { error?: string }) {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Your name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Jaidev"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  />
-                </div>
+                {mode === 'signup' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Your name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Jaidev"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Email address
