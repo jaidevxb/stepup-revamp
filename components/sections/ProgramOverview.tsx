@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { ArrowRight, Code2, Lightbulb, TrendingUp, Briefcase } from 'lucide-react';
+import { ArrowRight, ArrowDown, Code2, Lightbulb, TrendingUp, Briefcase } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function ProgramOverview() {
@@ -40,7 +40,7 @@ export default function ProgramOverview() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row items-stretch gap-0">
+        <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-0">
           {steps.map((step, index) => (
             <Fragment key={step.number}>
               <div className="flex-1">
@@ -58,9 +58,16 @@ export default function ProgramOverview() {
                 </Card>
               </div>
               {index < steps.length - 1 && (
-                <div className="hidden md:flex items-center justify-center px-2 flex-shrink-0">
-                  <ArrowRight className="h-5 w-5 text-gray-300" />
-                </div>
+                <>
+                  {/* Desktop: horizontal arrow */}
+                  <div className="hidden md:flex items-center justify-center px-2 flex-shrink-0">
+                    <ArrowRight className="h-5 w-5 text-gray-300" />
+                  </div>
+                  {/* Mobile: downward arrow */}
+                  <div className="flex md:hidden justify-center items-center py-1">
+                    <ArrowDown className="h-5 w-5 text-gray-300" />
+                  </div>
+                </>
               )}
             </Fragment>
           ))}

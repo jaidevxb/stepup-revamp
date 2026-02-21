@@ -10,15 +10,15 @@ export default function Hero() {
   };
 
   return (
-    <section className="pt-32 pb-20 px-6 bg-gradient-to-b from-gray-50 to-white">
+    <section className="pt-24 md:pt-32 pb-20 px-6 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="space-y-5 md:space-y-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
               Don't Just Learn to Code.{' '}
               <span className="text-gray-600">Learn to Ship Products.</span>
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-base md:text-xl text-gray-600 leading-relaxed">
               The STEP UP Program transforms beginners into startup-ready{' '}
               <span className="font-semibold text-gray-900">Product Developers</span>{' '}
               — the kind startups actually want to hire.

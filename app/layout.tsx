@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} pb-16 md:pb-0`}>{children}</body>
     </html>
   );
 }

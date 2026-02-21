@@ -188,19 +188,19 @@ export default function Dashboard({
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
 
         {/* Stats bar */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl border border-gray-100 p-5 text-center">
-            <p className="text-3xl font-bold text-gray-900">{percent}%</p>
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 md:p-5 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-gray-900">{percent}%</p>
             <p className="text-xs text-gray-400 mt-1">Complete</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5 text-center">
-            <p className="text-3xl font-bold text-gray-900">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 md:p-5 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-gray-900">
               🔥 {streak}
             </p>
             <p className="text-xs text-gray-400 mt-1">Day Streak</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5 text-center">
-            <p className="text-3xl font-bold text-gray-900">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 md:p-5 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-gray-900">
               {doneProjects}/{totalProjects}
             </p>
             <p className="text-xs text-gray-400 mt-1">Projects Done</p>
