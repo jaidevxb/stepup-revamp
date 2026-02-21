@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
-import { Globe, Github } from 'lucide-react';
+import { Globe, Github, ArrowRight } from 'lucide-react';
 import { TRACK_CONFIGS } from '@/lib/trackData';
 
 type GalleryProject = {
@@ -32,6 +32,20 @@ function formatDate(iso: string): string {
   });
 }
 
+// ── MOCK DATA — remove this block when done testing ──────────────────────────
+const MOCK_PROJECTS: GalleryProject[] = [
+  { id: 'm1', user_name: 'Arjun Patel',     track_id: 'fs-ai',        title: 'AI Resume Builder',             description: 'Generates tailored resumes using GPT-4 based on job descriptions. Built with Next.js, OpenAI API, and Supabase.',               demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-10T10:00:00Z' },
+  { id: 'm2', user_name: 'Riya Sharma',     track_id: 'fs-core',      title: 'Personal Finance Dashboard',    description: 'Track income, expenses, and savings goals with interactive charts. Full-stack app with React, Node.js, and PostgreSQL.',      demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-09T10:00:00Z' },
+  { id: 'm3', user_name: 'Priya Menon',     track_id: 'fs-ds',        title: 'COVID-19 Data Visualizer',      description: 'Interactive map and time-series charts of COVID-19 data across India using D3.js and Python.',                                   demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-08T10:00:00Z' },
+  { id: 'm4', user_name: 'Karthik Reddy',   track_id: 'fs-core',      title: 'E-commerce Storefront',         description: 'A fully functional online store with cart, checkout, and Stripe payments. Built with Next.js App Router and Supabase.',        demo_url: 'https://example.com', github_url: '',                   image_url: '', created_at: '2026-02-07T10:00:00Z' },
+  { id: 'm5', user_name: 'Sneha Iyer',      track_id: 'fs-ai',        title: 'Customer Support Chatbot',      description: 'Fine-tuned LLM chatbot that handles FAQs for SaaS products. Integrated with Slack and a React UI.',                           demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-06T10:00:00Z' },
+  { id: 'm6', user_name: 'Vikram Singh',    track_id: 'fs-analytics', title: 'Sales Analytics Dashboard',     description: 'Real-time sales KPIs and funnel analysis using Metabase, dbt, and BigQuery. Connects to CRM data.',                            demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-05T10:00:00Z' },
+  { id: 'm7', user_name: 'Divya Nair',      track_id: 'fs-devops',    title: 'CI/CD Pipeline Automation',     description: 'GitHub Actions workflow that builds, tests, and deploys a Next.js app to AWS ECS on every push to main.',                       demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-04T10:00:00Z' },
+  { id: 'm8', user_name: 'Rahul Gupta',     track_id: 'fs-ds',        title: 'Stock Price Predictor',         description: 'LSTM model trained on NSE historical data to predict next-day closing prices. Deployed with FastAPI and Streamlit.',           demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-03T10:00:00Z' },
+  { id: 'm9', user_name: 'Ananya Krishnan', track_id: 'fs-core',      title: 'Task Management App',           description: 'Kanban-style task board with drag-and-drop, team collaboration, and Slack notifications. Built with React and Express.',       demo_url: 'https://example.com', github_url: '',                   image_url: '', created_at: '2026-02-02T10:00:00Z' },
+];
+// ── END MOCK DATA ─────────────────────────────────────────────────────────────
+
 export default async function GalleryPage() {
   const supabase = await createClient();
 
@@ -40,7 +54,9 @@ export default async function GalleryPage() {
     .select('id, user_name, track_id, title, description, demo_url, github_url, image_url, created_at')
     .order('created_at', { ascending: false });
 
-  const allProjects = (projects ?? []) as GalleryProject[];
+  // ── MOCK: merge mock projects — remove [...MOCK_PROJECTS] when done testing
+  const allProjects = [...MOCK_PROJECTS, ...(projects ?? [])] as GalleryProject[];
+  // ── replace with this when done: const allProjects = (projects ?? []) as GalleryProject[];
 
   // Group counts by track for the filter summary
   const trackCounts = allProjects.reduce<Record<string, number>>((acc, p) => {
@@ -65,22 +81,30 @@ export default async function GalleryPage() {
             </p>
           </div>
 
-          {/* Track breakdown */}
-          {allProjects.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className="text-xs font-semibold px-3 py-1.5 bg-gray-900 text-white rounded-full">
-                All — {allProjects.length}
-              </span>
-              {Object.entries(trackCounts).map(([trackId, count]) => (
-                <span
-                  key={trackId}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-full ${TRACK_BADGE_STYLES[trackId] ?? 'bg-gray-100 text-gray-600'}`}
-                >
-                  {TRACK_CONFIGS[trackId]?.trackName ?? trackId} — {count}
+          {/* Track breakdown + leaderboard link */}
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            {allProjects.length > 0 && (
+              <>
+                <span className="text-xs font-semibold px-3 py-1.5 bg-gray-900 text-white rounded-full">
+                  All — {allProjects.length}
                 </span>
-              ))}
-            </div>
-          )}
+                {Object.entries(trackCounts).map(([trackId, count]) => (
+                  <span
+                    key={trackId}
+                    className={`text-xs font-medium px-3 py-1.5 rounded-full ${TRACK_BADGE_STYLES[trackId] ?? 'bg-gray-100 text-gray-600'}`}
+                  >
+                    {TRACK_CONFIGS[trackId]?.trackName ?? trackId} — {count}
+                  </span>
+                ))}
+              </>
+            )}
+            <Link
+              href="/leaderboard"
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors ml-auto"
+            >
+              Leaderboard <ArrowRight size={12} />
+            </Link>
+          </div>
         </div>
       </div>
 
