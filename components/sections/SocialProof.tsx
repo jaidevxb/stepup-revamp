@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Quote } from 'lucide-react';
 
@@ -5,9 +6,10 @@ export default function SocialProof() {
   const testimonials = [
     {
       name: 'Dr. Bargava Subramanian',
-      role: 'Data Scientist & Author',
-      company: 'Cisco',
+      role: 'Co-Founder and CEO',
+      company: 'Cornet Health',
       quote: 'The best way to learn is by building. StepUp\'s focus on shipping real products every week is exactly what the industry needs.',
+      image: '/bargava.jpg',
     },
   ];
 
@@ -27,7 +29,13 @@ export default function SocialProof() {
                   "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gray-900 rounded-full"></div>
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={56}
+                    height={56}
+                    className="rounded-full object-cover w-14 h-14"
+                  />
                   <div>
                     <div className="font-semibold text-gray-900">{testimonial.name}</div>
                     <div className="text-sm text-gray-600">{testimonial.role}</div>
