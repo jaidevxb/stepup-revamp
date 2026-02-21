@@ -1,4 +1,4 @@
-import { Code2, Github, Linkedin, Twitter } from 'lucide-react';
+import { Code2, Send } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -36,17 +36,15 @@ export default function Footer() {
 
           <div>
             <h3 className="font-semibold mb-4">Connect</h3>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-            </div>
+            <a
+              href="https://t.me/+umF60BUfik0xZTll"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              <Send className="h-4 w-4 flex-shrink-0" />
+              Telegram
+            </a>
           </div>
         </div>
 
