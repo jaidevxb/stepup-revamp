@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Globe, Github, ArrowRight } from 'lucide-react';
+import { Globe, Github, Linkedin, ArrowRight } from 'lucide-react';
 import { TRACK_CONFIGS } from '@/lib/trackData';
 
 type GalleryProject = {
@@ -13,6 +13,7 @@ type GalleryProject = {
   description: string;
   demo_url: string;
   github_url: string;
+  linkedin_url: string;
   image_url: string;
   created_at: string;
 };
@@ -35,15 +36,15 @@ function formatDate(iso: string): string {
 
 // ── MOCK DATA — remove this block when done testing ──────────────────────────
 const MOCK_PROJECTS: GalleryProject[] = [
-  { id: 'm1', user_name: 'Arjun Patel',     track_id: 'fs-ai',        title: 'AI Resume Builder',             description: 'Generates tailored resumes using GPT-4 based on job descriptions. Built with Next.js, OpenAI API, and Supabase.',               demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-10T10:00:00Z' },
-  { id: 'm2', user_name: 'Riya Sharma',     track_id: 'fs-core',      title: 'Personal Finance Dashboard',    description: 'Track income, expenses, and savings goals with interactive charts. Full-stack app with React, Node.js, and PostgreSQL.',      demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-09T10:00:00Z' },
-  { id: 'm3', user_name: 'Priya Menon',     track_id: 'fs-ds',        title: 'COVID-19 Data Visualizer',      description: 'Interactive map and time-series charts of COVID-19 data across India using D3.js and Python.',                                   demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-08T10:00:00Z' },
-  { id: 'm4', user_name: 'Karthik Reddy',   track_id: 'fs-core',      title: 'E-commerce Storefront',         description: 'A fully functional online store with cart, checkout, and Stripe payments. Built with Next.js App Router and Supabase.',        demo_url: 'https://example.com', github_url: '',                   image_url: '', created_at: '2026-02-07T10:00:00Z' },
-  { id: 'm5', user_name: 'Sneha Iyer',      track_id: 'fs-ai',        title: 'Customer Support Chatbot',      description: 'Fine-tuned LLM chatbot that handles FAQs for SaaS products. Integrated with Slack and a React UI.',                           demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-06T10:00:00Z' },
-  { id: 'm6', user_name: 'Vikram Singh',    track_id: 'fs-analytics', title: 'Sales Analytics Dashboard',     description: 'Real-time sales KPIs and funnel analysis using Metabase, dbt, and BigQuery. Connects to CRM data.',                            demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-05T10:00:00Z' },
-  { id: 'm7', user_name: 'Divya Nair',      track_id: 'fs-devops',    title: 'CI/CD Pipeline Automation',     description: 'GitHub Actions workflow that builds, tests, and deploys a Next.js app to AWS ECS on every push to main.',                       demo_url: '',                    github_url: 'https://github.com', image_url: '', created_at: '2026-02-04T10:00:00Z' },
-  { id: 'm8', user_name: 'Rahul Gupta',     track_id: 'fs-ds',        title: 'Stock Price Predictor',         description: 'LSTM model trained on NSE historical data to predict next-day closing prices. Deployed with FastAPI and Streamlit.',           demo_url: 'https://example.com', github_url: 'https://github.com', image_url: '', created_at: '2026-02-03T10:00:00Z' },
-  { id: 'm9', user_name: 'Ananya Krishnan', track_id: 'fs-core',      title: 'Task Management App',           description: 'Kanban-style task board with drag-and-drop, team collaboration, and Slack notifications. Built with React and Express.',       demo_url: 'https://example.com', github_url: '',                   image_url: '', created_at: '2026-02-02T10:00:00Z' },
+  { id: 'm1', user_name: 'Arjun Patel',     track_id: 'fs-ai',        title: 'AI Resume Builder',             description: 'Generates tailored resumes using GPT-4 based on job descriptions. Built with Next.js, OpenAI API, and Supabase.',               demo_url: 'https://example.com', github_url: 'https://github.com', linkedin_url: 'https://www.linkedin.com/posts/arjunpatel_buildinpublic-ai-nextjs-activity-7201234567890123456-abcd', image_url: '', created_at: '2026-02-10T10:00:00Z' },
+  { id: 'm2', user_name: 'Riya Sharma',     track_id: 'fs-core',      title: 'Personal Finance Dashboard',    description: 'Track income, expenses, and savings goals with interactive charts. Full-stack app with React, Node.js, and PostgreSQL.',      demo_url: 'https://example.com', github_url: 'https://github.com', linkedin_url: '',                                                                                                                    image_url: '', created_at: '2026-02-09T10:00:00Z' },
+  { id: 'm3', user_name: 'Priya Menon',     track_id: 'fs-ds',        title: 'COVID-19 Data Visualizer',      description: 'Interactive map and time-series charts of COVID-19 data across India using D3.js and Python.',                                   demo_url: '',                    github_url: 'https://github.com', linkedin_url: 'https://www.linkedin.com/posts/priyamenon_datascience-python-d3js-activity-7198876543210987654-wxyz',    image_url: '', created_at: '2026-02-08T10:00:00Z' },
+  { id: 'm4', user_name: 'Karthik Reddy',   track_id: 'fs-core',      title: 'E-commerce Storefront',         description: 'A fully functional online store with cart, checkout, and Stripe payments. Built with Next.js App Router and Supabase.',        demo_url: 'https://example.com', github_url: '',                   linkedin_url: '',                                                                                                                    image_url: '', created_at: '2026-02-07T10:00:00Z' },
+  { id: 'm5', user_name: 'Sneha Iyer',      track_id: 'fs-ai',        title: 'Customer Support Chatbot',      description: 'Fine-tuned LLM chatbot that handles FAQs for SaaS products. Integrated with Slack and a React UI.',                           demo_url: 'https://example.com', github_url: 'https://github.com', linkedin_url: 'https://www.linkedin.com/posts/sneha-iyer_llm-buildinpublic-saas-activity-7195432109876543210-pqrs',      image_url: '', created_at: '2026-02-06T10:00:00Z' },
+  { id: 'm6', user_name: 'Vikram Singh',    track_id: 'fs-analytics', title: 'Sales Analytics Dashboard',     description: 'Real-time sales KPIs and funnel analysis using Metabase, dbt, and BigQuery. Connects to CRM data.',                            demo_url: '',                    github_url: 'https://github.com', linkedin_url: '',                                                                                                                    image_url: '', created_at: '2026-02-05T10:00:00Z' },
+  { id: 'm7', user_name: 'Divya Nair',      track_id: 'fs-devops',    title: 'CI/CD Pipeline Automation',     description: 'GitHub Actions workflow that builds, tests, and deploys a Next.js app to AWS ECS on every push to main.',                       demo_url: '',                    github_url: 'https://github.com', linkedin_url: 'https://www.linkedin.com/posts/divyanair_devops-cicd-aws-activity-7192109876543219876-mnop',          image_url: '', created_at: '2026-02-04T10:00:00Z' },
+  { id: 'm8', user_name: 'Rahul Gupta',     track_id: 'fs-ds',        title: 'Stock Price Predictor',         description: 'LSTM model trained on NSE historical data to predict next-day closing prices. Deployed with FastAPI and Streamlit.',           demo_url: 'https://example.com', github_url: 'https://github.com', linkedin_url: '',                                                                                                                    image_url: '', created_at: '2026-02-03T10:00:00Z' },
+  { id: 'm9', user_name: 'Ananya Krishnan', track_id: 'fs-core',      title: 'Task Management App',           description: 'Kanban-style task board with drag-and-drop, team collaboration, and Slack notifications. Built with React and Express.',       demo_url: 'https://example.com', github_url: '',                   linkedin_url: 'https://www.linkedin.com/posts/ananyakrishnan_webdev-reactjs-buildinpublic-activity-7188765432109876543-efgh', image_url: '', created_at: '2026-02-02T10:00:00Z' },
 ];
 // ── END MOCK DATA ─────────────────────────────────────────────────────────────
 
@@ -52,7 +53,7 @@ export default async function GalleryPage() {
 
   const { data: projects } = await supabase
     .from('gallery_projects')
-    .select('id, user_name, track_id, title, description, demo_url, github_url, image_url, created_at')
+    .select('id, user_name, track_id, title, description, demo_url, github_url, linkedin_url, image_url, created_at')
     .order('created_at', { ascending: false });
 
   // ── MOCK: merge mock projects — remove [...MOCK_PROJECTS] when done testing
@@ -188,6 +189,17 @@ export default async function GalleryPage() {
                         >
                           <Github size={12} />
                           Code
+                        </a>
+                      )}
+                      {project.linkedin_url && (
+                        <a
+                          href={project.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium"
+                        >
+                          <Linkedin size={12} />
+                          Post
                         </a>
                       )}
                     </div>

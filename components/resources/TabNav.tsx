@@ -11,7 +11,7 @@ export default function TabNav({ activeTab }: TabNavProps) {
   const router = useRouter();
 
   return (
-    <div className="overflow-x-auto pb-1">
+    <div className="overflow-x-auto pb-3">
       <div className="flex gap-2 min-w-max mx-auto w-fit">
         {TABS.map((tab) => {
           const isActive = tab.id === activeTab;

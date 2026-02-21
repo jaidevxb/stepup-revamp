@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ExternalLink, Trash2, Globe, Github, Send, ImagePlus, X, Pencil, Check } from 'lucide-react';
+import { ExternalLink, Trash2, Globe, Github, Linkedin, Send, ImagePlus, X, Pencil, Check } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { TRACK_CONFIGS, TRACK_OPTIONS } from '@/lib/trackData';
@@ -15,6 +15,7 @@ export type GalleryProject = {
   description: string;
   demo_url: string;
   github_url: string;
+  linkedin_url: string;
   image_url: string;
   created_at: string;
 };
@@ -73,6 +74,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
   const [description, setDescription] = useState('');
   const [demoUrl, setDemoUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -90,6 +92,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
   const [editDescription, setEditDescription] = useState('');
   const [editDemoUrl, setEditDemoUrl] = useState('');
   const [editGithubUrl, setEditGithubUrl] = useState('');
+  const [editLinkedinUrl, setEditLinkedinUrl] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => { setSelectedTrack(currentTrack); }, [currentTrack]);
@@ -169,6 +172,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
         description: description.trim(),
         demo_url: demoUrl.trim(),
         github_url: githubUrl.trim(),
+        linkedin_url: linkedinUrl.trim(),
         image_url: imageUrl,
       })
       .select()
@@ -178,7 +182,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
       setError(insertError.message);
     } else if (data) {
       setSubmissions((prev) => [data as GalleryProject, ...prev]);
-      setTitle(''); setDescription(''); setDemoUrl(''); setGithubUrl('');
+      setTitle(''); setDescription(''); setDemoUrl(''); setGithubUrl(''); setLinkedinUrl('');
       clearImage();
       setSuccess(true);
     }
@@ -191,6 +195,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
     setEditDescription(s.description);
     setEditDemoUrl(s.demo_url);
     setEditGithubUrl(s.github_url);
+    setEditLinkedinUrl(s.linkedin_url ?? '');
     setPendingDeleteId(null);
   };
 
@@ -202,6 +207,7 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
       description: editDescription.trim(),
       demo_url: editDemoUrl.trim(),
       github_url: editGithubUrl.trim(),
+      linkedin_url: editLinkedinUrl.trim(),
     };
     await supabase.from('gallery_projects').update(updates).eq('id', id);
     setSubmissions((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
@@ -297,6 +303,13 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
               className="w-full text-sm text-gray-900 placeholder-gray-400 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
           </div>
         </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">
+            LinkedIn Post URL</label>
+          <input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)}
+            placeholder="https://linkedin.com/posts/..."
+            className="w-full text-sm text-gray-900 placeholder-gray-400 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+        </div>
 
         {/* Cover image */}
         <div>
@@ -384,6 +397,12 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
                                 <Github size={11} /> GitHub
                               </a>
                             )}
+                            {s.linkedin_url && (
+                              <a href={s.linkedin_url} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors">
+                                <Linkedin size={11} /> LinkedIn
+                              </a>
+                            )}
                           </div>
                         </div>
 
@@ -435,6 +454,9 @@ export default function SubmitProject({ currentTrack, userName }: SubmitProjectP
                         placeholder="GitHub URL"
                         className="text-sm text-gray-900 placeholder-gray-400 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white" />
                     </div>
+                    <input type="url" value={editLinkedinUrl} onChange={(e) => setEditLinkedinUrl(e.target.value)}
+                      placeholder="LinkedIn Post URL"
+                      className="w-full text-sm text-gray-900 placeholder-gray-400 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white" />
                     <div className="flex items-center gap-2">
                       <button onClick={() => handleEditSave(s.id)} disabled={saving || !editTitle.trim()}
                         className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50">

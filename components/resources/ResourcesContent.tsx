@@ -29,7 +29,7 @@ export default function ResourcesContent() {
       </section>
 
       {/* Tab Navigation */}
-      <section className="sticky top-0 z-10 bg-white border-b border-gray-100 py-4 px-4 shadow-sm">
+      <section className="sticky top-[65px] z-40 bg-white border-b border-gray-100 py-4 px-4 shadow-sm">
         <div className="max-w-6xl mx-auto">
           <TabNav activeTab={activeTab} />
         </div>

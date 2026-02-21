@@ -68,8 +68,13 @@ export default function Dashboard({
   const totalTopics = allTopics.length;
   const doneCount = allTopics.filter((t) => completedTopics.has(t.id)).length;
   const percent = totalTopics > 0 ? Math.round((doneCount / totalTopics) * 100) : 0;
-  const doneProjects = projects.filter((p) => p.status === 'done').length;
-  const totalProjects = projects.length;
+  const firstIncompleteIndex = trackConfig.phases.findIndex(
+    (phase) => phase.topics.some((t) => !completedTopics.has(t.id))
+  );
+  const currentPhaseNumber =
+    firstIncompleteIndex === -1
+      ? trackConfig.phases.length
+      : trackConfig.phases[firstIncompleteIndex].phaseNumber;
 
   // ─── Toggle topic + update streak ──────────────────────────────────────────
 
@@ -155,10 +160,6 @@ export default function Dashboard({
     router.refresh();
   };
 
-  const firstIncompleteIndex = trackConfig.phases.findIndex(
-    (phase) => phase.topics.some((t) => !completedTopics.has(t.id))
-  );
-
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -201,9 +202,9 @@ export default function Dashboard({
           </div>
           <div className="bg-white rounded-xl border border-gray-100 p-3 md:p-5 text-center">
             <p className="text-2xl md:text-3xl font-bold text-gray-900">
-              {doneProjects}/{totalProjects}
+              {firstIncompleteIndex === -1 ? '✓' : currentPhaseNumber}
             </p>
-            <p className="text-xs text-gray-400 mt-1">Projects Done</p>
+            <p className="text-xs text-gray-400 mt-1">Current Phase</p>
           </div>
         </div>
 
