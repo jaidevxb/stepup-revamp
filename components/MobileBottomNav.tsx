@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutGrid, BookOpen, Map, Images, Trophy } from 'lucide-react';
+import { Home, LayoutGrid, BookOpen, Map, Images } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Home',        icon: Home,        href: '/' },
@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { label: 'Tracks',      icon: Map,         href: '/#tracks' },
   { label: 'Resources',   icon: BookOpen,    href: '/resources' },
   { label: 'Gallery',     icon: Images,      href: '/gallery' },
-  { label: 'Leaderboard', icon: Trophy,      href: '/leaderboard' },
 ];
 
 export default function MobileBottomNav() {

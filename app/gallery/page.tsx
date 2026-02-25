@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Globe, Github, Linkedin, ArrowRight } from 'lucide-react';
+import { Globe, Github, Linkedin } from 'lucide-react';
 import { TRACK_CONFIGS } from '@/lib/trackData';
 
 type GalleryProject = {
@@ -83,7 +83,7 @@ export default async function GalleryPage() {
             </p>
           </div>
 
-          {/* Track breakdown + leaderboard link */}
+          {/* Track breakdown */}
           <div className="mt-6 flex flex-wrap items-center gap-2">
             {allProjects.length > 0 && (
               <>
@@ -100,12 +100,6 @@ export default async function GalleryPage() {
                 ))}
               </>
             )}
-            <Link
-              href="/leaderboard"
-              className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors ml-auto"
-            >
-              Leaderboard <ArrowRight size={12} />
-            </Link>
           </div>
         </div>
       </div>

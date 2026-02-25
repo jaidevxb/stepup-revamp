@@ -61,9 +61,6 @@ export default function Navigation() {
               <Link href="/gallery" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                 Gallery
               </Link>
-              <Link href="/leaderboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                Leaderboard
-              </Link>
               <Link href="/tracks" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                 My Track
               </Link>
