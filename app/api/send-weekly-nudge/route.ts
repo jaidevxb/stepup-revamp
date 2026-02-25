@@ -40,7 +40,7 @@ function buildEmailHtml(name: string, trackName: string, streak: number, lastAct
           <!-- Logo -->
           <tr>
             <td style="padding-bottom:24px;text-align:center;">
-              <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.5px;">⬛ StepUp</span>
+              <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.5px;">👩🏻‍💻 StepUp</span>
             </td>
           </tr>
 

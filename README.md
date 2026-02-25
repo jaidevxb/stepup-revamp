@@ -1,6 +1,6 @@
 # StepUp — Full-Stack Product Development Program
 
-A community-driven, self-paced learning platform that guides developers through a structured curriculum to build real products. StepUp tracks your progress through phases, logs weekly projects, showcases the community gallery, and ranks builders on a leaderboard.
+A community-driven, self-paced learning platform that guides developers through a structured curriculum to build real products. StepUp tracks your progress through phases, logs weekly projects, and showcases the community gallery.
 
 ---
 
@@ -36,7 +36,7 @@ StepUp is a full-stack web application built with **Next.js 13 App Router** and 
 - Complete phase-based topic checklists with streak tracking
 - Log weekly projects with status and LinkedIn URLs
 - Submit finished projects to the community gallery
-- Browse the leaderboard to see who is shipping the most
+- Receive weekly email nudges to stay on track
 
 ---
 
@@ -58,7 +58,8 @@ StepUp is a full-stack web application built with **Next.js 13 App Router** and 
 | Toasts | Sonner 1.5.0 |
 | Date Utilities | date-fns 3.6.0 |
 | Class Utilities | clsx + tailwind-merge |
-| Deployment | Netlify (via `@netlify/plugin-nextjs`) |
+| Email | Resend |
+| Deployment | Vercel (primary) + Netlify |
 
 ---
 
@@ -72,10 +73,11 @@ stepup-redesign/
 │   ├── homepage.tsx            # Full landing page (client component)
 │   ├── globals.css             # Tailwind directives + CSS variables
 │   ├── favicon.ico             # App icon
+│   ├── api/
+│   │   └── send-weekly-nudge/
+│   │       └── route.ts        # Weekly email nudge endpoint (POST + GET for Vercel cron)
 │   ├── gallery/
 │   │   └── page.tsx            # Community gallery (server component)
-│   ├── leaderboard/
-│   │   └── page.tsx            # Builder leaderboard (server component)
 │   ├── resources/
 │   │   └── page.tsx            # Learning resources (Suspense wrapper)
 │   └── tracks/
@@ -126,8 +128,12 @@ stepup-redesign/
 ├── public/
 │   └── bargava.jpg             # Testimonial endorser image
 │
+├── netlify/
+│   └── functions/
+│       └── weekly-nudge.mts    # Netlify scheduled function (Monday 9am UTC)
 ├── middleware.ts               # Session refresh on every request
 ├── next.config.js              # Next.js config (ESLint + image settings)
+├── vercel.json                 # Vercel cron job schedule
 ├── tailwind.config.ts          # Tailwind theme (colors, animations)
 ├── tsconfig.json               # TypeScript config (@/* path alias)
 ├── components.json             # shadcn/ui config
@@ -143,9 +149,9 @@ stepup-redesign/
 | `/` | Client | Landing page — Hero, Program, Tracks, Testimonial, FAQ |
 | `/tracks` | Server | Main dashboard (auth-gated). Shows AuthPage or Dashboard |
 | `/gallery` | Server | Public community gallery of submitted projects |
-| `/leaderboard` | Server | Public ranking of builders by projects shipped |
 | `/resources` | Server (Suspense) | Curated learning resources, tab-filtered by track |
 | `/tracks/auth/callback` | API Route | Supabase magic link exchange → session creation |
+| `/api/send-weekly-nudge` | API Route | Sends weekly nudge emails via Resend (POST + GET) |
 
 ---
 
@@ -170,19 +176,20 @@ stepup-redesign/
 - Optional cover image upload with automatic center-crop to 1200×545 (JPEG, 0.9 quality)
 - Max file size: 10 MB
 - Images stored in Supabase Storage (`project-images` bucket)
-- Submissions appear in the community gallery and count on the leaderboard
+- Submissions appear in the community gallery
 - Users can view and delete their own submissions
 
 ### Community Gallery
 - Displays all submitted projects from all users
 - Shows project cover image (if uploaded), title, track badge, description, demo/GitHub links, submitter name, and date
-- Linked to the leaderboard
 
-### Leaderboard
-- Ranks users by number of projects submitted to the gallery
-- Top 3 displayed with gold/silver/bronze medal highlighting
-- Rank 4+ shown in a compact ranked list
-- Refreshes every 60 seconds (`revalidate = 60`)
+### Weekly Email Nudges
+- Automated weekly emails sent to every user every Monday at 9:00 AM UTC (2:30 PM IST)
+- Personalized content: user's name, current streak, active track
+- Message adapts based on activity: active streak encouragement vs. lapsed-user re-engagement copy
+- Triggered automatically via Vercel Cron (`vercel.json`) or Netlify Scheduled Functions (`netlify/functions/weekly-nudge.mts`)
+- Manual trigger: `POST /api/send-weekly-nudge` with `Authorization: Bearer <SEND_WEEKLY_SECRET>`
+- Sent via Resend
 
 ### Learning Resources
 - Curated resource cards for each specialization track
@@ -345,11 +352,20 @@ USING (bucket_id = 'project-images');
 Create a `.env.local` file at the project root:
 
 ```env
+# Supabase (public — safe to expose)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+
+# App URL (used in email CTA link)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Weekly email nudges — keep these server-side only
+RESEND_API_KEY=re_your_resend_api_key
+SEND_WEEKLY_SECRET=your-strong-secret-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-Both variables are prefixed with `NEXT_PUBLIC_` because they are used in browser (client-side) code. They are safe to expose — Supabase Row Level Security (RLS) controls data access on the server.
+`NEXT_PUBLIC_*` variables are used in browser code and safe to expose. The remaining three (`RESEND_API_KEY`, `SEND_WEEKLY_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`) are server-only and must never be exposed to the client.
 
 ---
 
@@ -462,8 +478,8 @@ Open [http://localhost:3000](http://localhost:3000)
 | Component | Description |
 |---|---|
 | `Navigation.tsx` | Fixed top bar with logo, desktop nav links, smooth scroll to sections, mobile "Get Started" button |
-| `MobileBottomNav.tsx` | Fixed bottom tab bar (mobile only, `md:hidden`). Tabs: Home, Program, Tracks, Resources, Gallery, Leaderboard. Active tab gets bold icon and text. |
-| `Footer.tsx` | Site footer with links to Program, Resources (Learning Materials, Project Gallery, Leaderboard), and legal info |
+| `MobileBottomNav.tsx` | Fixed bottom tab bar (mobile only, `md:hidden`). Tabs: Home, Program, Tracks, Resources, Gallery. Active tab gets bold icon and text. |
+| `Footer.tsx` | Site footer with links to Program, Resources (Learning Materials, Project Gallery), and legal info |
 
 ### Landing Page Sections
 
@@ -584,22 +600,23 @@ type GalleryProject = {
 
 ## Deployment
 
-**Platform:** Netlify
-
-The project includes `@netlify/plugin-nextjs` in `package.json` for full Next.js support on Netlify including:
-- Server-side rendering
-- API routes
-- Edge middleware (session refresh)
+**Primary platform:** Vercel
 
 **Steps:**
 1. Push repository to GitHub
-2. Connect repo to Netlify
-3. Set build command: `npm run build`
-4. Set publish directory: `.next`
-5. Add environment variables in Netlify dashboard:
+2. Import project in Vercel dashboard
+3. Add all environment variables in Vercel → Settings → Environment Variables:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-6. Add production URL to Supabase allowed redirect URLs
+   - `NEXT_PUBLIC_APP_URL` (set to your production URL)
+   - `RESEND_API_KEY`
+   - `SEND_WEEKLY_SECRET`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `CRON_SECRET` is **auto-generated by Vercel** — do not set manually
+4. Add production URL to Supabase allowed redirect URLs
+5. Vercel will automatically schedule the weekly email cron from `vercel.json`
+
+**Netlify (alternative):** The project also includes `@netlify/plugin-nextjs` and a `netlify/functions/weekly-nudge.mts` scheduled function. To deploy on Netlify instead, connect the repo and add the same environment variables in the Netlify dashboard.
 
 **`next.config.js` settings:**
 ```js
@@ -614,11 +631,11 @@ The project includes `@netlify/plugin-nextjs` in `package.json` for full Next.js
 ## Known TODOs
 
 - **Remove mock data** from `app/gallery/page.tsx` (`MOCK_PROJECTS` array) once real submissions are live
-- **Remove mock data** from `app/leaderboard/page.tsx` (`MOCK_ENTRIES` array) once real data is confirmed
 - **Supabase RLS policies** should be fully configured before going to production — ensure users can only modify their own rows
 - **Image optimization** — `unoptimized: true` in `next.config.js` disables Next.js image optimization; consider enabling it with proper Supabase domain configuration
 - **Dark mode** — Tailwind dark mode is configured but not wired to any toggle UI yet
 - **Track switching** — When a user changes their active track, existing project log rows for the old track remain; consider whether to archive or hide them
+- **Email FROM domain** — Weekly nudges currently send from `onboarding@resend.dev` (delivers only to the Resend account owner's email). Once a custom domain is verified in Resend, update the `from:` field in `app/api/send-weekly-nudge/route.ts`
 
 ---
 
@@ -626,12 +643,12 @@ The project includes `@netlify/plugin-nextjs` in `package.json` for full Next.js
 
 Planned features not yet implemented:
 
-- **Weekly email nudges** — Automated weekly emails sent to each user summarizing their streak, progress percentage, and a nudge to log the week's project. Planned via Supabase Edge Functions + a transactional email provider (Resend / SendGrid). Email includes: current streak, topics completed that week, and a direct link back to their track dashboard.
+- **Leaderboard** — Public ranking of builders by number of projects submitted to the gallery. Top 3 highlighted with gold/silver/bronze medals; full ranked list below. Would require a `/leaderboard` page (server component, `revalidate = 60`) and a link in the nav and gallery header.
 - **Dark mode** — Tailwind dark mode is configured but no toggle UI exists yet
 - **Track progress comparison** — See how your pace compares to other learners on the same track
 - **Comment / reaction on gallery projects** — Community engagement on submitted projects
 - **Rich text project descriptions** — Markdown support in project description field
-- **Email notifications on leaderboard rank change** — Alert users when they move up or down in ranking
+- **Email unsubscribe** — Preference management so users can opt out of weekly nudges
 
 ---
 
